@@ -5,6 +5,7 @@ import { User } from '../../models/User.js';
 import { CLIENT_SECRET_KEY } from '../../utils/index.js';
 
 const authController = {
+    /* ---------------------> Register Logic <---------------------- */
     async registerUser(req, res) {
         const { username, email, password } = req.body; // Ensure password exists in req.body
         try {
@@ -43,7 +44,7 @@ const authController = {
             });
         }
     },
-
+    /* ---------------------> Login Logic <---------------------- */
     async loginUser(req, res) {
         const { email, password } = req.body;
         try {
@@ -57,11 +58,11 @@ const authController = {
             if (!checkPasswordMatch) {
                 return res.json({ success: false, message: "Invaild details check email and password" })
             }
-
+            // create || sign jsonwebtoken ==> created!
             const token = jwt.sign({
                 id: checkUser._id, role: checkUser.role, email: checkUser.email
             }, CLIENT_SECRET_KEY, { expiresIn: '60m' })
-
+            //===> store cookie <===
             res.cookie('token', token, { httpOnly: true, secure: false }).json({
                 success: true,
                 message: 'Logged In successfully',
@@ -79,7 +80,26 @@ const authController = {
                 message: "Some error occurred"
             });
         }
+    },
+    /* ---------------------> LoginOut Logic <---------------------- */
+    async loginOutUser(req, res) {
+        res.clearCookie('token').json({
+            success: true,
+            message: 'Logged out successfull'
+        })
+    },
+
+    /* ---------------------> Check User Auth Logic <---------------------- */
+    async checkUser(req, res) {
+        const user = req.user;
+        
+        res.status(200).json({
+            success: true,
+            message: 'Authenticated user',
+            user
+        })
     }
+
 };
 
 export default authController;

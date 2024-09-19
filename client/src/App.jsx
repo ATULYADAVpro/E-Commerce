@@ -15,7 +15,9 @@ import ShoppingListing from "./pages/shopping-view/listing"
 import ShoppingCheckout from "./pages/shopping-view/checkout"
 import CheckAuth from "./components/common/check-auth"
 import UnauthPage from "./pages/unauth-page"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { useEffect } from "react"
+import { checkAuth } from "./store/auth-slice"
 
 
 function App() {
@@ -25,7 +27,12 @@ function App() {
   //   role: 'user',
   // }
 
-  const {isAuthenticated , user} = useSelector(state => state.auth)
+  const { isAuthenticated, user } = useSelector(state => state.auth)
+  // this for store cookies work 
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(checkAuth())
+  }, [dispatch])
 
   return (
     <div className="flex flex-col overflow-hidden w-screen bg-white">
